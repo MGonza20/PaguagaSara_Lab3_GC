@@ -119,79 +119,58 @@ class Disk(object):
                          sceneObj = self)
 
 
-# Referencia: https://www.scratchapixel.com/lessons/3d-basic-rendering/ray-tracing-rendering-a-triangle/ray-triangle-intersection-geometric-solution#:~:text=The%20ray%20can%20intersect%20the,these%20two%20vectors%20is%200).
+def baryCoords(A, B, C, P):
 
+    areaPBC = (B[1] - C[1]) * (P[0] - C[0]) + (C[0] - B[0]) * (P[1] - C[1])
+    areaPAC = (C[1] - A[1]) * (P[0] - C[0]) + (A[0] - C[0]) * (P[1] - C[1])
+    areaABC = (B[1] - C[1]) * (A[0] - C[0]) + (C[0] - B[0]) * (A[1] - C[1])
 
-
-
+    try:
+        u = areaPBC / areaABC
+        v = areaPAC / areaABC
+        w = 1 - u - v
+    except:
+        return -1, -1, -1
+    else:
+        return u, v, w
 
 
 class Triangle(object):
-    def __init__(self, position, v0, v1, v2, normal, material):
-        self.plane = Plane(position, normal, material)
+    def __init__(self, A, B, C, material):
+        
+        position = [(A[0]+B[0]+C[0])/3, (A[1]+B[1]+C[1])/3, (A[2]+B[2]+C[2])/3]
+
+        edge1 = subtractVList(B, A)
+        edge2 = subtractVList(C, A)
+
+        triangleNormal = crossProduct(edge1, edge2)
+        triangleNormal = normV(triangleNormal)
+
+        self.normal = triangleNormal
+        self.plane = Plane(position, triangleNormal, material)
         self.material = material
-        self.v0 = v0
-        self.v1 = v1
-        self.v2 = v2
+        self.A = A
+        self.B = B
+        self.C = C
 
     def ray_intersect(self, orig, dir):
 
-        N = self.plane.normal
-        rayPlaneP =  dotProduct(N, dir)
-
-        epsilon = 0.001
-        # Chequear si el plano y el rayo son paralelos o si se intersectan
-        if (abs(rayPlaneP) < epsilon): 
-            return None
-
-        D = -1 * dotProduct(self.plane.normal, self.v0)
-
-        nA = self.plane.normal[0] 
-        nB = self.plane.normal[1] 
-        nC = self.plane.normal[2] 
-
-        # Multiplocando componentes de la normal con componentes del origen
-        dotO = nA * orig[0] + nB * orig[1] + nC * orig[2]
-        # Multiplocando componentes de la normal con componentes de la direccion del rayo
-        dotR = nA * dir[0] + nB * dir[1] + nC * dir[2]
-
-        # Calculando la distancia del origen del rayo a P
-        t = -1 * (dotO + D )  / dotR
-
-        # Se devuelve none porque el triangulo esta detras del rayo
-        if (t < 0):
-            return None
-
-        # punto del centro promedio de los 3 puntos
-        # normal de  los 3 puntos con producto
-
-        P = addVectors(orig, [t*dir[0], t*dir[1], t*dir[2]])
+        A = self.A  
+        B = self.B  
+        C = self.C  
 
         intersect = self.plane.ray_intersect(orig, dir)
-        if intersect is None:
-            return None
-
-        edge0 = subtractVList(self.v1, self.v0)
-        edge1 = subtractVList(self.v2, self.v1)
-        edge2 = subtractVList(self.v0, self.v2)
-
-        # C es el vector perpendicular al plano del triangulo
-        C0 = subtractVList(P, self.v0)
-        C1 = subtractVList(P, self.v1)
-        C2 = subtractVList(P, self.v2)
-
-        #Chequeo que P esta dentro del triangulo
-        if (dotProduct(N, crossProduct(edge0, C0)) > 0 and
-            dotProduct(N, crossProduct(edge1, C1)) > 0 and
-            dotProduct(N, crossProduct(edge2, C2)) > 0):
-
-            return Intersect(distance = D,
-                            point = P,
-                            normal = N,
-                            texcoords = None,
-                            sceneObj = self)
+        if intersect is not None:
+            u, v, w = baryCoords(A, B, C, intersect.point)
+            if 0<=u and 0<=v and 0<=w:
+                return Intersect(distance = intersect.distance,
+                                point = intersect.point,
+                                normal = self.normal,
+                                texcoords = None,
+                                sceneObj = self)
         else:
             return None
+
 
 
 

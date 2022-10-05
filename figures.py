@@ -163,10 +163,11 @@ class Triangle(object):
         if intersect is not None:
             u, v, w = baryCoords(A, B, C, intersect.point)
             if 0<=u and 0<=v and 0<=w:
+                uvs = (u, v)
                 return Intersect(distance = intersect.distance,
                                 point = intersect.point,
                                 normal = self.normal,
-                                texcoords = None,
+                                texcoords = uvs,
                                 sceneObj = self)
         else:
             return None

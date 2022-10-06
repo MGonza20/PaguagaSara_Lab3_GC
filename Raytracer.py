@@ -4,8 +4,8 @@ from figures import *
 from lights import *
 
 
-width = 2056
-height = 2056
+width = 4096
+height = 4096
 
 # Materiales
 brick = Material(diffuse = (0.8, 0.3, 0.3), spec = 16)
@@ -28,11 +28,11 @@ rtx.envMap = Texture("parkingLot.bmp")
 rtx.lights.append( AmbientLight(intensity = 0.1 ))
 rtx.lights.append( DirectionalLight(direction = (-1,-1,-1), intensity = 0.8 ))
 
-rtx.scene.append(Triangle(A = (-0.5-1.5,0+0.5,-4), B = (1-1.5,1.7+0.5,-4), C = (0-1.5, 1.5+0.5, -4), material = marble5))
-rtx.scene.append(Triangle(A = (-1*(-0.5-1.5)+0.25,-1*(0+0.5-1),-4), B = (-1*(1-1.5)+0.25, -1*(1.7+0.5-1),-4), C = (-1*(0-1.5)+0.25, -1*(1.5+0.5-1), -4), material = wallMat))
-rtx.scene.append(Triangle(A = (-1,0,-3.5), B = (1,0,-3.5), C = (0, 1.5, -3.5), material = marble))
+rtx.scene.append(Triangle(A = (-0.5-1.5,0+0.5-0.5,-4), B = (1-1.5,1.7+0.5-0.5,-4), C = (0-1.5, 1.5+0.5-0.5, -4), material = marble5))
+rtx.scene.append(Triangle(A = (-1*(-0.5-1.5)-0.5 +0.35 ,-1*(0+0.5-1)-0.5-0.25,-4), B = (-1*(1-1.5)-0.5 + 0.35, -1*(1.7+0.5-1)-0.5-0.25,-4), C = (-1*(0-1.5)+0.25 + 0.35, -1*(1.5+0.5-1)-0.5-0.25, -4), material = wallMat))
+rtx.scene.append(Triangle(A = (-1 -0.1,0-0.5,-3.5), B = (1 -0.1,0-0.5,-3.5), C = (0 -0.1, 1.5-0.5, -3.5), material = marble))
 
 
 rtx.glRender()
 
-rtx.glFinish("output.bmp")
+rtx.glFinish("output3.bmp")

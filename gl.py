@@ -183,7 +183,6 @@ class Raytracer(object):
             secondSum = addVectors(firstSum, specColor)
             finalColor = secondSum
 
-
         finalColorArr = [finalColor[0] * objectColor[0],
                          finalColor[1] * objectColor[1],
                          finalColor[2] * objectColor[2]]
@@ -253,9 +252,4 @@ class Raytracer(object):
             for y in range(self.height):
                 for x in range(self.width):
                     file.write(self.pixels[x][y])
-
-
-
-
-
 
